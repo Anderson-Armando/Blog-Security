@@ -1,6 +1,7 @@
 package br.com.etechoracio.blog.security;
 
 import br.com.etechoracio.blog.dto.UsuarioAutenticadoDTO;
+import br.com.etechoracio.blog.enums.RoleEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.time.Duration;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtToken {
@@ -46,14 +48,14 @@ public class JwtToken {
                .compact();
    }
 
-    //@SuppressWarnings("unchecked")
-    //public UserDetails getUsuarioAutenticado(String token) {
-    //    var claims = getClaims(token);
-    //    var role = claims.get("roles", List.class).stream().findAny().orElse(RoleEnum.COMENTADOR.name());
-    //    return UsuarioAutenticadoDTO.builder().login(claims.getSubject())
-    //                                          .id(claims.get("id", Integer.class))
-    //                                          .role(RoleEnum.getByValue((String) role))
-    //                                .build();
-    //}
+    @SuppressWarnings("unchecked")
+    public UserDetails getUsuarioAutenticado(String token) {
+        var claims = getClaims(token);
+        var role = claims.get("roles", List.class).stream().findAny().orElse(RoleEnum.COMENTADOR.name());
+        return (UserDetails) UsuarioAutenticadoDTO.builder().login(claims.getSubject())
+                                              .id(claims.get("id", Integer.class))
+                                              .role(RoleEnum.getByValue((String) role))
+                                    .build();
+    }
 
 }
